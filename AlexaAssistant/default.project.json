@@ -1,5 +1,5 @@
 {
-  "name": "VideoEditor",
+  "name": "AlexaAssistant",
   "tree": {
     "$className": "DataModel",
     "ServerScriptService": {
@@ -16,6 +16,10 @@
     "ReplicatedStorage": {
       "$className": "ReplicatedStorage",
       "$path": "src/shared"
+    },
+    "Workspace": {
+      "$className": "Workspace",
+      "$path": "src/workspace"
     }
   }
 }
