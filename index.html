@@ -3,27 +3,22 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://fonts.googleapis.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com; font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com; img-src 'self' data: https:; connect-src 'self' https://api.github.com;">
   <title>Clack - Editor de Código Profesional</title>
   
-  <!-- Fuentes e íconos -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
 
   <style>
-    /* Variables CSS Estilo Claude AI */
     :root {
       --primary-orange: #ff6b35;
       --primary-orange-hover: #e55a2b;
       --primary-orange-light: rgba(255, 107, 53, 0.1);
       --bg-primary: #ffffff;
       --bg-secondary: #f8f9fa;
-      --bg-tertiary: #f1f3f4;
       --text-primary: #1a1a1a;
       --text-secondary: #666666;
-      --text-tertiary: #999999;
       --border-light: #e5e7eb;
       --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
       --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
@@ -53,7 +48,6 @@
       transition: all var(--transition-fast);
     }
 
-    /* Animaciones */
     @keyframes fadeIn {
       from { opacity: 0; transform: translateY(10px); }
       to { opacity: 1; transform: translateY(0); }
@@ -64,7 +58,6 @@
       to { opacity: 1; transform: translateX(0); }
     }
 
-    /* Header */
     .header {
       position: sticky;
       top: 0;
@@ -139,7 +132,6 @@
       color: var(--text-primary);
     }
 
-    /* Navegación */
     .nav {
       background: var(--bg-secondary);
       border-bottom: 1px solid var(--border-light);
@@ -174,7 +166,6 @@
       background: var(--primary-orange-light);
     }
 
-    /* Layout principal */
     .main-container {
       max-width: 1200px;
       margin: 0 auto;
@@ -190,7 +181,6 @@
       animation: fadeIn 0.5s ease-out;
     }
 
-    /* Editor */
     .editor-container {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
@@ -279,11 +269,10 @@
       padding: var(--space-md) var(--space-sm);
       font-family: 'SF Mono', Monaco, monospace;
       font-size: 12px;
-      color: var(--text-tertiary);
+      color: var(--text-secondary);
       user-select: none;
     }
 
-    /* Toolbar */
     .toolbar {
       display: flex;
       align-items: center;
@@ -321,7 +310,6 @@
       color: var(--primary-orange);
     }
 
-    /* Proyectos */
     .projects-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
@@ -343,7 +331,6 @@
       border-color: var(--primary-orange);
     }
 
-    /* Modal */
     .modal {
       position: fixed;
       top: 0;
@@ -371,7 +358,6 @@
       box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
     }
 
-    /* Toast */
     .toast-container {
       position: fixed;
       top: var(--space-lg);
@@ -397,7 +383,6 @@
     .toast.warning { border-left: 4px solid #f59e0b; }
     .toast.info { border-left: 4px solid #3b82f6; }
 
-    /* Responsive */
     @media (max-width: 768px) {
       .header-content { padding: var(--space-sm) var(--space-md); }
       .main-container { padding: var(--space-md); }
@@ -409,15 +394,6 @@
 </head>
 
 <body>
-  <!-- Intro Animation -->
-  <div class="intro" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(135deg, var(--primary-orange), #ff8c42); display: flex; align-items: center; justify-content: center; z-index: 9999; animation: fadeOut 1s ease-out 2s forwards;">
-    <div style="text-align: center; color: white; animation: fadeIn 0.8s ease-out 0.5s both;">
-      <div style="font-size: 4rem; font-weight: 700; margin-bottom: 16px;">Clack</div>
-      <div style="font-size: 1.2rem; opacity: 0.9;">Editor de Código Profesional</div>
-    </div>
-  </div>
-
-  <!-- Header -->
   <header class="header">
     <div class="header-content">
       <a href="#" class="logo">
@@ -428,14 +404,8 @@
       </a>
       
       <div style="display: flex; align-items: center; gap: 8px;">
-        <button class="btn btn-ghost" id="searchBtn" title="Buscar">
-          <i class="fas fa-search"></i>
-        </button>
         <button class="btn btn-ghost" id="themeToggle" title="Cambiar tema">
           <i class="fas fa-moon"></i>
-        </button>
-        <button class="btn btn-ghost" id="settingsBtn" title="Configuración">
-          <i class="fas fa-cog"></i>
         </button>
         <button class="btn btn-primary" id="previewBtn">
           <i class="fas fa-eye"></i>
@@ -445,7 +415,6 @@
     </div>
   </header>
 
-  <!-- Navigation -->
   <nav class="nav">
     <div class="nav-content">
       <a href="#" class="nav-link active" onclick="showSection('editor')">
@@ -456,19 +425,12 @@
         <i class="fas fa-folder"></i>
         Proyectos
       </a>
-      <a href="#" class="nav-link" onclick="showSection('templates')">
-        <i class="fas fa-layer-group"></i>
-        Plantillas
-      </a>
     </div>
   </nav>
 
-  <!-- Main Container -->
   <main class="main-container">
-    <!-- Editor Section -->
     <section id="editor" class="section active">
       <div class="editor-container">
-        <!-- HTML Editor -->
         <div class="editor-panel">
           <div class="editor-header">
             <div class="editor-title">
@@ -487,9 +449,8 @@
               class="code-editor" 
               id="htmlEditor" 
               placeholder="<!DOCTYPE html>
-<html lang='es'>
+<html>
 <head>
-    <meta charset='UTF-8'>
     <title>Mi Proyecto</title>
 </head>
 <body>
@@ -501,7 +462,6 @@
           </div>
         </div>
 
-        <!-- CSS Editor -->
         <div class="editor-panel">
           <div class="editor-header">
             <div class="editor-title">
@@ -519,12 +479,10 @@
             <textarea 
               class="code-editor" 
               id="cssEditor" 
-              placeholder="/* Estilos CSS */
-body {
-    font-family: 'Inter', sans-serif;
+              placeholder="body {
+    font-family: Arial, sans-serif;
     margin: 0;
     padding: 20px;
-    background: #f8f9fa;
 }
 
 h1 {
@@ -536,7 +494,6 @@ h1 {
           </div>
         </div>
 
-        <!-- JavaScript Editor -->
         <div class="editor-panel">
           <div class="editor-header">
             <div class="editor-title">
@@ -554,15 +511,13 @@ h1 {
             <textarea 
               class="code-editor" 
               id="jsEditor" 
-              placeholder="// JavaScript
-document.addEventListener('DOMContentLoaded', function() {
-    console.log('¡Aplicación cargada!');
+              placeholder="document.addEventListener('DOMContentLoaded', function() {
+    console.log('¡Hola desde Clack!');
     
-    // Tu código aquí
     const titulo = document.querySelector('h1');
     if (titulo) {
         titulo.addEventListener('click', function() {
-            alert('¡Hola desde Clack!');
+            alert('¡Funciona!');
         });
     }
 });"
@@ -572,7 +527,6 @@ document.addEventListener('DOMContentLoaded', function() {
         </div>
       </div>
 
-      <!-- Toolbar -->
       <div class="toolbar">
         <div class="tool-group">
           <button class="tool-btn" onclick="formatCode()" title="Formatear código">
@@ -582,17 +536,6 @@ document.addEventListener('DOMContentLoaded', function() {
           <button class="tool-btn" onclick="validateCode()" title="Validar código">
             <i class="fas fa-check-circle"></i>
             Validar
-          </button>
-        </div>
-
-        <div class="tool-group">
-          <button class="tool-btn" onclick="undoAction()" title="Deshacer">
-            <i class="fas fa-undo"></i>
-            Deshacer
-          </button>
-          <button class="tool-btn" onclick="redoAction()" title="Rehacer">
-            <i class="fas fa-redo"></i>
-            Rehacer
           </button>
         </div>
 
@@ -609,7 +552,6 @@ document.addEventListener('DOMContentLoaded', function() {
       </div>
     </section>
 
-    <!-- Projects Section -->
     <section id="projects" class="section">
       <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px;">
         <h2 style="font-size: 24px; font-weight: 700;">Mis Proyectos</h2>
@@ -620,35 +562,19 @@ document.addEventListener('DOMContentLoaded', function() {
       </div>
 
       <div class="projects-grid" id="projectsGrid">
-        <!-- Los proyectos se cargarán dinámicamente -->
-      </div>
-    </section>
-
-    <!-- Templates Section -->
-    <section id="templates" class="section">
-      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px;">
-        <h2 style="font-size: 24px; font-weight: 700;">Plantillas</h2>
-      </div>
-
-      <div class="projects-grid">
-        <div class="project-card">
-          <h3>Página Básica</h3>
-          <p>Plantilla HTML básica con CSS</p>
-          <button class="btn btn-primary" style="margin-top: 16px;">Usar Plantilla</button>
-        </div>
-        <div class="project-card">
-          <h3>Landing Page</h3>
-          <p>Página de aterrizaje moderna</p>
-          <button class="btn btn-primary" style="margin-top: 16px;">Usar Plantilla</button>
+        <div class="project-card" onclick="createNewProject()">
+          <h3>Crear Nuevo Proyecto</h3>
+          <p>Comienza un nuevo proyecto desde cero</p>
+          <div style="margin-top: 16px;">
+            <button class="btn btn-primary">Crear</button>
+          </div>
         </div>
       </div>
     </section>
   </main>
 
-  <!-- Toast Container -->
   <div class="toast-container" id="toastContainer"></div>
 
-  <!-- Preview Modal -->
   <div class="modal" id="previewModal">
     <div class="modal-content" style="max-width: 90%; max-height: 90%;">
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
@@ -661,23 +587,7 @@ document.addEventListener('DOMContentLoaded', function() {
     </div>
   </div>
 
-  <script src="app.js"></script>
-  
   <script>
-    // Inicialización
-    document.addEventListener('DOMContentLoaded', function() {
-      setTimeout(() => {
-        const intro = document.querySelector('.intro');
-        if (intro) intro.remove();
-      }, 3000);
-
-      initializeEditors();
-      loadProjects();
-      setupEventListeners();
-      showToast('success', '¡Bienvenido a Clack!', 'Editor listo para usar');
-    });
-
-    // Funciones principales
     function showSection(sectionName) {
       document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
       document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
@@ -686,26 +596,9 @@ document.addEventListener('DOMContentLoaded', function() {
       event.target.classList.add('active');
     }
 
-    function initializeEditors() {
-      ['html', 'css', 'js'].forEach(type => {
-        const editor = document.getElementById(`${type}Editor`);
-        const lineNumbers = document.getElementById(`${type}LineNumbers`);
-        
-        if (editor && lineNumbers) {
-          editor.addEventListener('input', () => updateLineNumbers(editor, lineNumbers));
-          updateLineNumbers(editor, lineNumbers);
-        }
-      });
-    }
-
     function updateLineNumbers(editor, lineNumbers) {
       const lines = editor.value.split('\n').length;
       lineNumbers.textContent = Array.from({length: lines}, (_, i) => i + 1).join('\n');
-    }
-
-    function setupEventListeners() {
-      document.getElementById('themeToggle').addEventListener('click', toggleTheme);
-      document.getElementById('previewBtn').addEventListener('click', showPreview);
     }
 
     function toggleTheme() {
@@ -734,7 +627,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function formatCode() {
-      showToast('info', 'Código formateado', 'Formato aplicado correctamente');
+      showToast('success', 'Código formateado', 'Formato aplicado correctamente');
     }
 
     function validateCode() {
@@ -760,19 +653,6 @@ document.addEventListener('DOMContentLoaded', function() {
       a.click();
       
       showToast('success', 'Proyecto exportado', 'Archivo descargado');
-    }
-
-    function loadProjects() {
-      const grid = document.getElementById('projectsGrid');
-      grid.innerHTML = `
-        <div class="project-card" onclick="openProject(1)">
-          <h3>Mi Primera Web</h3>
-          <p>Página web básica con HTML y CSS</p>
-          <div style="margin-top: 16px;">
-            <button class="btn btn-primary">Abrir</button>
-          </div>
-        </div>
-      `;
     }
 
     function createNewProject() {
@@ -802,21 +682,22 @@ document.addEventListener('DOMContentLoaded', function() {
       }, 4000);
     }
 
-    // Cargar tema guardado
-    const savedTheme = localStorage.getItem('theme');
-    if (savedTheme === 'dark') {
-      document.body.classList.add('dark-mode');
-      document.querySelector('#themeToggle i').className = 'fas fa-sun';
-    }
+    document.addEventListener('DOMContentLoaded', function() {
+      ['html', 'css', 'js'].forEach(type => {
+        const editor = document.getElementById(`${type}Editor`);
+        const lineNumbers = document.getElementById(`${type}LineNumbers`);
+        
+        if (editor && lineNumbers) {
+          editor.addEventListener('input', () => updateLineNumbers(editor, lineNumbers));
+          updateLineNumbers(editor, lineNumbers);
+        }
+      });
 
-    // Animación de salida para intro
-    const style = document.createElement('style');
-    style.textContent = `
-      @keyframes fadeOut {
-        to { opacity: 0; visibility: hidden; }
-      }
-    `;
-    document.head.appendChild(style);
+      document.getElementById('themeToggle').addEventListener('click', toggleTheme);
+      document.getElementById('previewBtn').addEventListener('click', showPreview);
+      
+      showToast('success', '¡Bienvenido a Clack!', 'Editor listo para usar');
+    });
   </script>
 </body>
 </html>
