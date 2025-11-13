@@ -32,16 +32,11 @@ local function createGroundCrack(position, size)
 	light.Range = 15
 	light.Parent = crack
 	
-	-- Efecto pulsante de luz
-	spawn(function()
-		while crack.Parent do
-			local pulse = TweenService:Create(light, TweenInfo.new(2, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut, -1, true), {
-				Brightness = 2
-			})
-			pulse:Play()
-			wait(2)
-		end
-	end)
+	-- Efecto pulsante de luz (optimizado)
+	local pulse = TweenService:Create(light, TweenInfo.new(2, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut, -1, true), {
+		Brightness = 2
+	})
+	pulse:Play()
 	
 	-- Partículas de humo saliendo
 	local attachment = Instance.new("Attachment")
@@ -89,17 +84,12 @@ local function createOrganicWall(position, size)
 		vein.Transparency = 0.3
 		vein.Parent = wall
 		
-		-- Pulso de venas
-		spawn(function()
-			while vein.Parent do
-				local pulse = TweenService:Create(vein, TweenInfo.new(1.5, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut, -1, true), {
-					Transparency = 0.6,
-					Color = Color3.fromRGB(70, 40, 50)
-				})
-				pulse:Play()
-				wait(1.5)
-			end
-		end)
+		-- Pulso de venas (optimizado)
+		local pulse = TweenService:Create(vein, TweenInfo.new(1.5, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut, -1, true), {
+			Transparency = 0.6,
+			Color = Color3.fromRGB(70, 40, 50)
+		})
+		pulse:Play()
 	end
 	
 	return wall
@@ -145,15 +135,10 @@ local function createOrganicNest(position)
 	light.Range = 20
 	light.Parent = nest
 	
-	spawn(function()
-		while nest.Parent do
-			local pulse = TweenService:Create(light, TweenInfo.new(3, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut, -1, true), {
-				Brightness = 2.5
-			})
-			pulse:Play()
-			wait(3)
-		end
-	end)
+	local pulse = TweenService:Create(light, TweenInfo.new(3, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut, -1, true), {
+		Brightness = 2.5
+	})
+	pulse:Play()
 	
 	return nest
 end
@@ -184,25 +169,24 @@ local function createFloatingRock(position, size)
 	dust.SpreadAngle = Vector2.new(180, 180)
 	dust.Parent = attachment
 	
-	-- Movimiento flotante
-	spawn(function()
-		local originalPos = position
-		while rock.Parent do
-			local offset = Vector3.new(
-				math.sin(tick() * 0.5) * 2,
-				math.sin(tick() * 0.3) * 1,
-				math.cos(tick() * 0.5) * 2
-			)
-			rock.Position = originalPos + offset
-			wait()
-		end
+	-- Movimiento flotante (optimizado)
+	local originalPos = position
+	local RunService = game:GetService("RunService")
+	RunService.Heartbeat:Connect(function()
+		if not rock.Parent then return end
+		local offset = Vector3.new(
+			math.sin(tick() * 0.5) * 2,
+			math.sin(tick() * 0.3) * 1,
+			math.cos(tick() * 0.5) * 2
+		)
+		rock.Position = originalPos + offset
 	end)
 	
 	return rock
 end
 
 -- Generar grietas en el suelo
-for i = 1, 30 do
+for i = 1, 15 do
 	local crackPos = Vector3.new(
 		math.random(-200, 200),
 		0.5,
@@ -217,7 +201,7 @@ for i = 1, 30 do
 end
 
 -- Generar paredes orgánicas
-for i = 1, 15 do
+for i = 1, 8 do
 	local wallPos = Vector3.new(
 		math.random(-180, 180),
 		math.random(10, 20),
@@ -232,7 +216,7 @@ for i = 1, 15 do
 end
 
 -- Generar nidos orgánicos
-for i = 1, 12 do
+for i = 1, 6 do
 	local nestPos = Vector3.new(
 		math.random(-170, 170),
 		math.random(2, 8),
@@ -242,7 +226,7 @@ for i = 1, 12 do
 end
 
 -- Generar rocas flotantes
-for i = 1, 25 do
+for i = 1, 12 do
 	local rockPos = Vector3.new(
 		math.random(-190, 190),
 		math.random(15, 35),

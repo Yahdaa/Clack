@@ -75,22 +75,25 @@ local function createTentacle(basePosition, segments)
 		previousSegment = segment
 	end
 	
-	-- Animación ondulante
-	spawn(function()
-		while tentacleModel.Parent do
-			for i, segment in ipairs(segmentParts) do
-				if not segment.Anchored then
-					local force = Instance.new("BodyForce")
-					force.Force = Vector3.new(
-						math.sin(tick() * 2 + i) * 500,
-						0,
-						math.cos(tick() * 2 + i) * 500
-					)
-					force.Parent = segment
-					game:GetService("Debris"):AddItem(force, 0.1)
-				end
+	-- Animación ondulante (optimizada)
+	local RunService = game:GetService("RunService")
+	local lastUpdate = tick()
+	RunService.Heartbeat:Connect(function()
+		if not tentacleModel.Parent then return end
+		if tick() - lastUpdate < 0.2 then return end
+		lastUpdate = tick()
+		
+		for i, segment in ipairs(segmentParts) do
+			if not segment.Anchored and segment.Parent then
+				local force = Instance.new("BodyForce")
+				force.Force = Vector3.new(
+					math.sin(tick() * 2 + i) * 500,
+					0,
+					math.cos(tick() * 2 + i) * 500
+				)
+				force.Parent = segment
+				game:GetService("Debris"):AddItem(force, 0.2)
 			end
-			wait(0.1)
 		end
 	end)
 	
@@ -98,7 +101,7 @@ local function createTentacle(basePosition, segments)
 end
 
 -- Crear múltiples tentáculos en el mundo
-for i = 1, 15 do
+for i = 1, 8 do
 	local randomPos = Vector3.new(
 		math.random(-180, 180),
 		0,

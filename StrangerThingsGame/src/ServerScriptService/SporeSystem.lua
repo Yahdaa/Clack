@@ -25,33 +25,30 @@ local function createFloatingSpore(position)
 	light.Range = 5
 	light.Parent = spore
 	
-	-- Movimiento flotante aleatorio
-	spawn(function()
-		while spore.Parent do
-			local randomOffset = Vector3.new(
-				math.random(-20, 20),
-				math.random(-10, 10),
-				math.random(-20, 20)
-			)
-			
-			local targetPos = position + randomOffset
-			local tween = TweenService:Create(spore, TweenInfo.new(
-				math.random(5, 10),
-				Enum.EasingStyle.Sine,
-				Enum.EasingDirection.InOut
-			), {
-				Position = targetPos
-			})
-			tween:Play()
-			tween.Completed:Wait()
-		end
-	end)
+	-- Movimiento flotante aleatorio (optimizado)
+	local randomOffset = Vector3.new(
+		math.random(-20, 20),
+		math.random(-10, 10),
+		math.random(-20, 20)
+	)
+	
+	local targetPos = position + randomOffset
+	local tween = TweenService:Create(spore, TweenInfo.new(
+		math.random(5, 10),
+		Enum.EasingStyle.Sine,
+		Enum.EasingDirection.InOut,
+		-1,
+		true
+	), {
+		Position = targetPos
+	})
+	tween:Play()
 	
 	return spore
 end
 
 -- Generar múltiples esporas en el área
-for i = 1, 100 do
+for i = 1, 30 do
 	local randomPos = Vector3.new(
 		math.random(-200, 200),
 		math.random(5, 40),

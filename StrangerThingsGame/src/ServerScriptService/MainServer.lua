@@ -28,13 +28,13 @@ local function setupUpsideDownAtmosphere()
 	local lighting = game:GetService("Lighting")
 	
 	-- Configuración oscura y tenebrosa
-	lighting.Ambient = Color3.fromRGB(10, 15, 25)
-	lighting.OutdoorAmbient = Color3.fromRGB(5, 10, 15)
-	lighting.Brightness = 0.5
+	lighting.Ambient = Color3.fromRGB(50, 60, 80)
+	lighting.OutdoorAmbient = Color3.fromRGB(40, 50, 70)
+	lighting.Brightness = 1.5
 	lighting.ClockTime = 0
-	lighting.FogColor = Color3.fromRGB(15, 20, 30)
-	lighting.FogEnd = 200
-	lighting.FogStart = 10
+	lighting.FogColor = Color3.fromRGB(30, 40, 50)
+	lighting.FogEnd = 300
+	lighting.FogStart = 50
 	
 	-- Efectos atmosféricos
 	local atmosphere = Instance.new("Atmosphere")
@@ -127,16 +127,11 @@ local function createVines(position, length)
 	spores.Speed = NumberRange.new(0.2, 0.5)
 	spores.Parent = attachment
 	
-	-- Animación de balanceo
-	spawn(function()
-		while vine.Parent do
-			local tween = TweenService:Create(vine, TweenInfo.new(3, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut, -1, true), {
-				CFrame = vine.CFrame * CFrame.Angles(math.rad(5), 0, math.rad(5))
-			})
-			tween:Play()
-			wait(3)
-		end
-	end)
+	-- Animación de balanceo (optimizada)
+	local tween = TweenService:Create(vine, TweenInfo.new(3, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut, -1, true), {
+		CFrame = vine.CFrame * CFrame.Angles(math.rad(5), 0, math.rad(5))
+	})
+	tween:Play()
 	
 	return vine
 end
@@ -224,12 +219,12 @@ local function createPortal(normalPos, upsideDownPos)
 		end
 	end)
 	
-	-- Animación de rotación
-	spawn(function()
-		while normalPortal.Parent do
+	-- Animación de rotación (optimizada)
+	local RunService = game:GetService("RunService")
+	RunService.Heartbeat:Connect(function()
+		if normalPortal.Parent then
 			normalPortal.CFrame = normalPortal.CFrame * CFrame.Angles(0, math.rad(1), 0)
 			returnPortal.CFrame = returnPortal.CFrame * CFrame.Angles(0, math.rad(1), 0)
-			wait()
 		end
 	end)
 end
@@ -293,17 +288,12 @@ local function createOrganicMembrane(position, size)
 	membrane.CanCollide = false
 	membrane.Parent = UpsideDownFolder
 	
-	-- Efecto pulsante
-	spawn(function()
-		while membrane.Parent do
-			local pulse = TweenService:Create(membrane, TweenInfo.new(2, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut, -1, true), {
-				Transparency = 0.6,
-				Size = size * 1.05
-			})
-			pulse:Play()
-			wait(2)
-		end
-	end)
+	-- Efecto pulsante (optimizado)
+	local pulse = TweenService:Create(membrane, TweenInfo.new(2, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut, -1, true), {
+		Transparency = 0.6,
+		Size = size * 1.05
+	})
+	pulse:Play()
 	
 	return membrane
 end
@@ -428,7 +418,7 @@ setupUpsideDownAtmosphere()
 createUpsideDownGround()
 
 -- Crear múltiples lianas en el mundo
-for i = 1, 50 do
+for i = 1, 20 do
 	local randomPos = Vector3.new(
 		math.random(-200, 200),
 		math.random(20, 40),
@@ -438,7 +428,7 @@ for i = 1, 50 do
 end
 
 -- Crear edificios del Upside Down
-for i = 1, 10 do
+for i = 1, 5 do
 	local buildingPos = Vector3.new(
 		math.random(-150, 150),
 		math.random(15, 25),
@@ -453,7 +443,7 @@ for i = 1, 10 do
 end
 
 -- Crear membranas orgánicas
-for i = 1, 20 do
+for i = 1, 10 do
 	local membranePos = Vector3.new(
 		math.random(-180, 180),
 		math.random(5, 30),
