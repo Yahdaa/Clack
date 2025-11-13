@@ -1,0 +1,69 @@
+
+{
+  "name": "ClackKoder",
+  "packageName": "com.clackkoder.app",
+  "display": "standalone",
+  "orientation": "portrait",
+  "theme_color": "#1877f2",
+  "background_color": "#1877f2",
+  "start_url": "/",
+  "scope": "/",
+  "description": "Editor de código profesional con compilación en tiempo real",
+  "short_name": "ClackKoder",
+  "lang": "es",
+  "dir": "ltr",
+  "categories": ["productivity", "developer", "utilities"],
+  "screenshots": [
+    {
+      "src": "https://via.placeholder.com/540x720/1877f2/ffffff?text=ClackKoder+Mobile",
+      "sizes": "540x720",
+      "type": "image/png",
+      "form_factor": "narrow"
+    }
+  ],
+  "icons": [
+    {
+      "src": "https://via.placeholder.com/512x512/1877f2/ffffff?text=CK",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable any"
+    }
+  ],
+  "android": {
+    "package": "com.clackkoder.app",
+    "name": "ClackKoder",
+    "launcherName": "ClackKoder",
+    "versionCode": 1,
+    "versionName": "1.0.0",
+    "minSdkVersion": 21,
+    "targetSdkVersion": 33,
+    "compileSdkVersion": 33,
+    "permissions": [
+      "INTERNET",
+      "ACCESS_NETWORK_STATE",
+      "WRITE_EXTERNAL_STORAGE",
+      "READ_EXTERNAL_STORAGE",
+      "CAMERA",
+      "VIBRATE"
+    ],
+    "features": [
+      "android.hardware.camera",
+      "android.hardware.camera.autofocus"
+    ],
+    "signing": {
+      "keyAlias": "clackkoder",
+      "keyPassword": "clackkoder123",
+      "storeFile": "clackkoder.keystore",
+      "storePassword": "clackkoder123"
+    }
+  },
+  "ios": {
+    "bundleIdentifier": "com.clackkoder.app",
+    "bundleVersion": "1.0.0"
+  },
+  "windows": {
+    "packageName": "ClackKoder",
+    "identityName": "ClackKoder",
+    "publisherDisplayName": "ClackKoder Team"
+  }
+}

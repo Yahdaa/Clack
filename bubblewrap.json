@@ -1,0 +1,76 @@
+
+{
+  "packageId": "com.clackkoder.app",
+  "host": "your-replit-url.replit.app",
+  "name": "ClackKoder",
+  "launcherName": "ClackKoder",
+  "display": "standalone",
+  "orientation": "portrait",
+  "themeColor": "#1877f2",
+  "backgroundColor": "#1877f2",
+  "startUrl": "/",
+  "iconUrl": "https://via.placeholder.com/512x512/1877f2/ffffff?text=CK",
+  "maskableIconUrl": "https://via.placeholder.com/512x512/1877f2/ffffff?text=CK",
+  "splashScreenFadeOutDuration": 300,
+  "enableSiteSettingsShortcut": true,
+  "isChromeOSOnly": false,
+  "isMetaQuest": false,
+  "shortcuts": [
+    {
+      "name": "Nuevo Proyecto",
+      "short_name": "Nuevo",
+      "url": "/?action=new",
+      "icons": [
+        {
+          "src": "https://via.placeholder.com/192x192/28a745/ffffff?text=+",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "Mis Proyectos",
+      "short_name": "Proyectos",
+      "url": "/?section=proyectos",
+      "icons": [
+        {
+          "src": "https://via.placeholder.com/192x192/ffc107/ffffff?text=📁",
+          "sizes": "192x192"
+        }
+      ]
+    }
+  ],
+  "generatorApp": "bubblewrap-cli",
+  "webManifestUrl": "https://your-replit-url.replit.app/manifest.json",
+  "fallbackType": "customtabs",
+  "features": {
+    "locationDelegation": {
+      "enabled": true
+    },
+    "playBilling": {
+      "enabled": false
+    }
+  },
+  "alphaDependencies": {
+    "enabled": false
+  },
+  "enableNotifications": true,
+  "fingerprints": [],
+  "additionalTrustedOrigins": [],
+  "retainedBundles": [],
+  "appVersionName": "1.0.0",
+  "appVersionCode": 1,
+  "minSdkVersion": 21,
+  "targetSdkVersion": 33,
+  "signingKey": {
+    "path": "./android.keystore",
+    "alias": "clackkoder"
+  },
+  "useColoredStatusBar": true,
+  "enableFullScreen": false,
+  "enableImmersiveMode": false,
+  "enableUrlBarHiding": false,
+  "enableSplashScreen": true,
+  "enableSiteSettingsShortcut": true,
+  "enableDefaultSharingShortcut": true,
+  "enableWebApkVersionUpgrade": true
+}
