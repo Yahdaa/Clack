@@ -452,7 +452,106 @@ for i = 1, 10 do
 	createOrganicMembrane(membranePos, Vector3.new(15, 10, 0.5))
 end
 
+-- Crear spawn point para jugadores
+local spawnLocation = Instance.new("SpawnLocation")
+spawnLocation.Name = "UpsideDownSpawn"
+spawnLocation.Size = Vector3.new(10, 1, 10)
+spawnLocation.Position = Vector3.new(0, 1, 0)
+spawnLocation.Anchored = true
+spawnLocation.BrickColor = BrickColor.new("Bright red")
+spawnLocation.Material = Enum.Material.Neon
+spawnLocation.Transparency = 0.5
+spawnLocation.CanCollide = true
+spawnLocation.Parent = UpsideDownFolder
+
+-- Crear plataforma base visible
+local platform = Instance.new("Part")
+platform.Name = "StartPlatform"
+platform.Size = Vector3.new(50, 2, 50)
+platform.Position = Vector3.new(0, 0, 0)
+platform.Anchored = true
+platform.Color = Color3.fromRGB(60, 50, 55)
+platform.Material = Enum.Material.Cobblestone
+platform.Parent = UpsideDownFolder
+
+-- Agregar luces en el suelo para visibilidad
+for i = 1, 20 do
+	local lightPart = Instance.new("Part")
+	lightPart.Name = "GroundLight"
+	lightPart.Size = Vector3.new(3, 1, 3)
+	lightPart.Position = Vector3.new(
+		math.random(-100, 100),
+		1,
+		math.random(-100, 100)
+	)
+	lightPart.Anchored = true
+	lightPart.Color = Color3.fromRGB(100, 50, 150)
+	lightPart.Material = Enum.Material.Neon
+	lightPart.Transparency = 0.3
+	lightPart.Parent = UpsideDownFolder
+	
+	local light = Instance.new("PointLight")
+	light.Color = Color3.fromRGB(100, 50, 150)
+	light.Brightness = 5
+	light.Range = 40
+	light.Parent = lightPart
+end
+
+-- Crear rocas y objetos en el suelo
+for i = 1, 30 do
+	local rock = Instance.new("Part")
+	rock.Name = "Rock"
+	rock.Size = Vector3.new(
+		math.random(3, 8),
+		math.random(3, 8),
+		math.random(3, 8)
+	)
+	rock.Position = Vector3.new(
+		math.random(-150, 150),
+		rock.Size.Y/2 + 1,
+		math.random(-150, 150)
+	)
+	rock.Anchored = true
+	rock.Color = Color3.fromRGB(50, 55, 60)
+	rock.Material = Enum.Material.Slate
+	rock.Parent = UpsideDownFolder
+end
+
+-- Crear árboles muertos
+for i = 1, 15 do
+	local trunk = Instance.new("Part")
+	trunk.Name = "DeadTree"
+	trunk.Size = Vector3.new(2, 15, 2)
+	trunk.Position = Vector3.new(
+		math.random(-140, 140),
+		8.5,
+		math.random(-140, 140)
+	)
+	trunk.Anchored = true
+	trunk.Color = Color3.fromRGB(40, 35, 35)
+	trunk.Material = Enum.Material.Wood
+	trunk.Parent = UpsideDownFolder
+	
+	-- Ramas
+	for j = 1, 3 do
+		local branch = Instance.new("Part")
+		branch.Name = "Branch"
+		branch.Size = Vector3.new(1, 6, 1)
+		branch.Position = trunk.Position + Vector3.new(
+			math.random(-3, 3),
+			math.random(2, 6),
+			math.random(-3, 3)
+		)
+		branch.Anchored = true
+		branch.Color = Color3.fromRGB(40, 35, 35)
+		branch.Material = Enum.Material.Wood
+		branch.Parent = trunk
+	end
+end
+
 -- Crear portales
-createPortal(Vector3.new(0, 5, 50), Vector3.new(0, 5, 0))
+createPortal(Vector3.new(30, 5, 0), Vector3.new(0, 5, 0))
 
 print("Stranger Things Upside Down world initialized!")
+print("Spawn at: 0, 1, 0")
+print("Portal at: 30, 5, 0")
