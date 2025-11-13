@@ -2,7 +2,57 @@
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local TweenService = game:GetService("TweenService")
-local TextService = game:GetService("TextService")
+
+-- Crear dispositivo Alexa virtual
+local function createAlexaDevice()
+	local alexaModel = Instance.new("Model")
+	alexaModel.Name = "AlexaDevice"
+	alexaModel.Parent = workspace
+	
+	local base = Instance.new("Part")
+	base.Name = "Base"
+	base.Size = Vector3.new(4, 6, 4)
+	base.Position = Vector3.new(0, 3, 0)
+	base.Anchored = true
+	base.Color = Color3.fromRGB(30, 30, 35)
+	base.Material = Enum.Material.SmoothPlastic
+	base.Shape = Enum.PartType.Cylinder
+	base.Parent = alexaModel
+	
+	local lightRing = Instance.new("Part")
+	lightRing.Name = "LightRing"
+	lightRing.Size = Vector3.new(4.2, 0.3, 4.2)
+	lightRing.Position = Vector3.new(0, 6.2, 0)
+	lightRing.Anchored = true
+	lightRing.Color = Color3.fromRGB(0, 255, 200)
+	lightRing.Material = Enum.Material.Neon
+	lightRing.Transparency = 0.5
+	lightRing.Shape = Enum.PartType.Cylinder
+	lightRing.Parent = alexaModel
+	
+	local pointLight = Instance.new("PointLight")
+	pointLight.Color = Color3.fromRGB(0, 255, 200)
+	pointLight.Brightness = 3
+	pointLight.Range = 20
+	pointLight.Parent = lightRing
+	
+	alexaModel.PrimaryPart = base
+	
+	-- Animación
+	spawn(function()
+		while lightRing.Parent do
+			TweenService:Create(lightRing, TweenInfo.new(2, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut, -1, true), {
+				Transparency = 0.8
+			}):Play()
+			TweenService:Create(pointLight, TweenInfo.new(2, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut, -1, true), {
+				Brightness = 5
+			}):Play()
+			wait(2)
+		end
+	end)
+	
+	return alexaModel
+end
 
 -- Remote Events
 local RemoteEvents = Instance.new("Folder")
@@ -103,4 +153,5 @@ VoiceCommand.OnServerEvent:Connect(function(player, command)
 	end
 end)
 
+createAlexaDevice()
 print("Alexa Server initialized!")

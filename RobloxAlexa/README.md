@@ -44,12 +44,10 @@ Alexa puede responder a:
 RobloxAlexa/
 ├── src/
 │   ├── ServerScriptService/
-│   │   └── AlexaServer.lua          # Procesamiento de comandos
-│   ├── StarterPlayer/
-│   │   └── StarterPlayerScripts/
-│   │       └── AlexaClient.lua      # UI y cliente
-│   └── Workspace/
-│       └── CreateAlexaDevice.lua    # Dispositivo 3D
+│   │   └── AlexaServer.lua          # Servidor + Dispositivo virtual
+│   └── StarterPlayer/
+│       └── StarterPlayerScripts/
+│           └── AlexaClient.lua      # UI y cliente
 └── README.md
 ```
 
@@ -78,8 +76,7 @@ RobloxAlexa/
 3. Copia los scripts a las carpetas correspondientes:
    - `AlexaServer.lua` → ServerScriptService
    - `AlexaClient.lua` → StarterPlayer > StarterPlayerScripts
-   - `CreateAlexaDevice.lua` → Workspace (ejecutar una vez)
-4. Presiona Play
+4. Presiona Play (el dispositivo se crea automáticamente)
 
 ## 🎨 Personalización
 
@@ -120,10 +117,10 @@ En `AlexaClient.lua`:
 - Indicador visual de estado
 - Botón flotante siempre accesible
 
-### Dispositivo 3D
-- Modelo procedural completo
-- Múltiples animaciones simultáneas
-- Sistema de partículas
+### Dispositivo Virtual
+- Se crea automáticamente al iniciar
+- Modelo 3D procedural
+- Animaciones de luz pulsante
 - Iluminación dinámica
 
 ## 💡 Efectos Visuales
