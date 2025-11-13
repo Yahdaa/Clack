@@ -1,0 +1,468 @@
+-- Main Server Script para Stranger Things Upside Down
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Players = game:GetService("Players")
+local TweenService = game:GetService("TweenService")
+
+-- Eventos remotos
+local RemoteEvents = Instance.new("Folder")
+RemoteEvents.Name = "RemoteEvents"
+RemoteEvents.Parent = ReplicatedStorage
+
+local TeleportEvent = Instance.new("RemoteEvent")
+TeleportEvent.Name = "TeleportToUpsideDown"
+TeleportEvent.Parent = RemoteEvents
+
+local PowerEvent = Instance.new("RemoteEvent")
+PowerEvent.Name = "ElevenPower"
+PowerEvent.Parent = RemoteEvents
+
+-- Configuración del mundo
+local UpsideDownFolder = workspace:FindFirstChild("UpsideDown") or Instance.new("Folder", workspace)
+UpsideDownFolder.Name = "UpsideDown"
+
+local NormalWorldFolder = workspace:FindFirstChild("NormalWorld") or Instance.new("Folder", workspace)
+NormalWorldFolder.Name = "NormalWorld"
+
+-- Crear atmósfera del Upside Down
+local function setupUpsideDownAtmosphere()
+	local lighting = game:GetService("Lighting")
+	
+	-- Configuración oscura y tenebrosa
+	lighting.Ambient = Color3.fromRGB(10, 15, 25)
+	lighting.OutdoorAmbient = Color3.fromRGB(5, 10, 15)
+	lighting.Brightness = 0.5
+	lighting.ClockTime = 0
+	lighting.FogColor = Color3.fromRGB(15, 20, 30)
+	lighting.FogEnd = 200
+	lighting.FogStart = 10
+	
+	-- Efectos atmosféricos
+	local atmosphere = Instance.new("Atmosphere")
+	atmosphere.Density = 0.5
+	atmosphere.Offset = 0.5
+	atmosphere.Color = Color3.fromRGB(20, 25, 35)
+	atmosphere.Decay = Color3.fromRGB(15, 20, 30)
+	atmosphere.Glare = 0
+	atmosphere.Haze = 2
+	atmosphere.Parent = lighting
+	
+	-- Color correction para tono azul-gris
+	local colorCorrection = Instance.new("ColorCorrectionEffect")
+	colorCorrection.Brightness = -0.1
+	colorCorrection.Contrast = 0.2
+	colorCorrection.Saturation = -0.3
+	colorCorrection.TintColor = Color3.fromRGB(150, 170, 200)
+	colorCorrection.Parent = lighting
+	
+	-- Bloom para efectos de luz
+	local bloom = Instance.new("BloomEffect")
+	bloom.Intensity = 0.5
+	bloom.Size = 24
+	bloom.Threshold = 0.8
+	bloom.Parent = lighting
+end
+
+-- Crear el suelo del Upside Down con textura orgánica
+local function createUpsideDownGround()
+	local ground = Instance.new("Part")
+	ground.Name = "UpsideDownGround"
+	ground.Size = Vector3.new(500, 5, 500)
+	ground.Position = Vector3.new(0, -2.5, 0)
+	ground.Anchored = true
+	ground.Color = Color3.fromRGB(25, 30, 40)
+	ground.Material = Enum.Material.Slate
+	ground.Parent = UpsideDownFolder
+	
+	-- Textura orgánica del suelo
+	local texture = Instance.new("Texture")
+	texture.Texture = "rbxasset://textures/terrain/slate.png"
+	texture.StudsPerTileU = 10
+	texture.StudsPerTileV = 10
+	texture.Parent = ground
+	
+	-- Partículas flotantes en el suelo
+	local particleEmitter = Instance.new("ParticleEmitter")
+	particleEmitter.Texture = "rbxasset://textures/particles/smoke_main.dds"
+	particleEmitter.Color = ColorSequence.new(Color3.fromRGB(40, 50, 70))
+	particleEmitter.Size = NumberSequence.new(0.5, 2)
+	particleEmitter.Transparency = NumberSequence.new(0.5, 1)
+	particleEmitter.Lifetime = NumberRange.new(3, 6)
+	particleEmitter.Rate = 5
+	particleEmitter.Speed = NumberRange.new(0.5, 1)
+	particleEmitter.SpreadAngle = Vector2.new(180, 180)
+	particleEmitter.Parent = ground
+	
+	return ground
+end
+
+-- Crear lianas colgantes (vines)
+local function createVines(position, length)
+	local vine = Instance.new("Part")
+	vine.Name = "Vine"
+	vine.Size = Vector3.new(0.5, length, 0.5)
+	vine.Position = position
+	vine.Anchored = true
+	vine.Color = Color3.fromRGB(30, 40, 35)
+	vine.Material = Enum.Material.Fabric
+	vine.CanCollide = false
+	vine.Parent = UpsideDownFolder
+	
+	-- Textura de liana
+	local mesh = Instance.new("CylinderMesh")
+	mesh.Scale = Vector3.new(1, 1, 1)
+	mesh.Parent = vine
+	
+	-- Efecto de movimiento
+	local attachment = Instance.new("Attachment")
+	attachment.Parent = vine
+	
+	-- Partículas de esporas
+	local spores = Instance.new("ParticleEmitter")
+	spores.Texture = "rbxasset://textures/particles/smoke_main.dds"
+	spores.Color = ColorSequence.new(Color3.fromRGB(60, 70, 50))
+	spores.Size = NumberSequence.new(0.2, 0.5)
+	spores.Transparency = NumberSequence.new(0.3, 1)
+	spores.Lifetime = NumberRange.new(2, 4)
+	spores.Rate = 2
+	spores.Speed = NumberRange.new(0.2, 0.5)
+	spores.Parent = attachment
+	
+	-- Animación de balanceo
+	spawn(function()
+		while vine.Parent do
+			local tween = TweenService:Create(vine, TweenInfo.new(3, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut, -1, true), {
+				CFrame = vine.CFrame * CFrame.Angles(math.rad(5), 0, math.rad(5))
+			})
+			tween:Play()
+			wait(3)
+		end
+	end)
+	
+	return vine
+end
+
+-- Crear portal de teletransporte
+local function createPortal(normalPos, upsideDownPos)
+	-- Portal en mundo normal
+	local normalPortal = Instance.new("Part")
+	normalPortal.Name = "PortalToUpsideDown"
+	normalPortal.Size = Vector3.new(8, 12, 0.5)
+	normalPortal.Position = normalPos
+	normalPortal.Anchored = true
+	normalPortal.CanCollide = false
+	normalPortal.Transparency = 0.3
+	normalPortal.Color = Color3.fromRGB(100, 50, 150)
+	normalPortal.Material = Enum.Material.Neon
+	normalPortal.Parent = NormalWorldFolder
+	
+	-- Efecto visual del portal
+	local portalLight = Instance.new("PointLight")
+	portalLight.Color = Color3.fromRGB(100, 50, 150)
+	portalLight.Brightness = 3
+	portalLight.Range = 20
+	portalLight.Parent = normalPortal
+	
+	-- Partículas del portal
+	local portalParticles = Instance.new("ParticleEmitter")
+	portalParticles.Texture = "rbxasset://textures/particles/sparkles_main.dds"
+	portalParticles.Color = ColorSequence.new(Color3.fromRGB(100, 50, 150))
+	portalParticles.Size = NumberSequence.new(1, 0)
+	portalParticles.Transparency = NumberSequence.new(0, 1)
+	portalParticles.Lifetime = NumberRange.new(1, 2)
+	portalParticles.Rate = 50
+	portalParticles.Speed = NumberRange.new(2, 5)
+	portalParticles.Rotation = NumberRange.new(0, 360)
+	portalParticles.Parent = normalPortal
+	
+	-- Detector de proximidad
+	local detector = Instance.new("Part")
+	detector.Name = "PortalDetector"
+	detector.Size = Vector3.new(10, 14, 3)
+	detector.Position = normalPos
+	detector.Anchored = true
+	detector.CanCollide = false
+	detector.Transparency = 1
+	detector.Parent = normalPortal
+	
+	detector.Touched:Connect(function(hit)
+		local humanoid = hit.Parent:FindFirstChild("Humanoid")
+		if humanoid then
+			local player = Players:GetPlayerFromCharacter(hit.Parent)
+			if player then
+				-- Teletransportar al Upside Down
+				hit.Parent:SetPrimaryPartCFrame(CFrame.new(upsideDownPos))
+				
+				-- Efecto de teletransporte
+				local char = hit.Parent
+				for _, part in pairs(char:GetDescendants()) do
+					if part:IsA("BasePart") then
+						local flash = Instance.new("PointLight")
+						flash.Color = Color3.fromRGB(100, 50, 150)
+						flash.Brightness = 5
+						flash.Range = 10
+						flash.Parent = part
+						game:GetService("Debris"):AddItem(flash, 0.5)
+					end
+				end
+			end
+		end
+	end)
+	
+	-- Portal de regreso en Upside Down
+	local returnPortal = normalPortal:Clone()
+	returnPortal.Name = "PortalToNormal"
+	returnPortal.Position = upsideDownPos
+	returnPortal.Parent = UpsideDownFolder
+	
+	returnPortal.PortalDetector.Touched:Connect(function(hit)
+		local humanoid = hit.Parent:FindFirstChild("Humanoid")
+		if humanoid then
+			local player = Players:GetPlayerFromCharacter(hit.Parent)
+			if player then
+				hit.Parent:SetPrimaryPartCFrame(CFrame.new(normalPos + Vector3.new(0, 0, 10)))
+			end
+		end
+	end)
+	
+	-- Animación de rotación
+	spawn(function()
+		while normalPortal.Parent do
+			normalPortal.CFrame = normalPortal.CFrame * CFrame.Angles(0, math.rad(1), 0)
+			returnPortal.CFrame = returnPortal.CFrame * CFrame.Angles(0, math.rad(1), 0)
+			wait()
+		end
+	end)
+end
+
+-- Crear edificios del Upside Down (versión deteriorada)
+local function createUpsideDownBuilding(position, size)
+	local building = Instance.new("Part")
+	building.Name = "UpsideDownBuilding"
+	building.Size = size
+	building.Position = position
+	building.Anchored = true
+	building.Color = Color3.fromRGB(35, 40, 50)
+	building.Material = Enum.Material.Concrete
+	building.Parent = UpsideDownFolder
+	
+	-- Agregar grietas y deterioro
+	local decal = Instance.new("Decal")
+	decal.Texture = "rbxasset://textures/face.png"
+	decal.Face = Enum.NormalId.Front
+	decal.Transparency = 0.7
+	decal.Parent = building
+	
+	-- Lianas en el edificio
+	for i = 1, math.random(3, 6) do
+		local vinePos = position + Vector3.new(
+			math.random(-size.X/2, size.X/2),
+			size.Y/2,
+			math.random(-size.Z/2, size.Z/2)
+		)
+		createVines(vinePos, math.random(5, 15))
+	end
+	
+	-- Partículas de deterioro
+	local attachment = Instance.new("Attachment")
+	attachment.Position = Vector3.new(0, size.Y/2, 0)
+	attachment.Parent = building
+	
+	local debris = Instance.new("ParticleEmitter")
+	debris.Texture = "rbxasset://textures/particles/smoke_main.dds"
+	debris.Color = ColorSequence.new(Color3.fromRGB(40, 45, 55))
+	debris.Size = NumberSequence.new(0.3, 0.8)
+	debris.Transparency = NumberSequence.new(0.5, 1)
+	debris.Lifetime = NumberRange.new(3, 5)
+	debris.Rate = 1
+	debris.Speed = NumberRange.new(0.5, 1)
+	debris.Parent = attachment
+	
+	return building
+end
+
+-- Crear membranas orgánicas en paredes
+local function createOrganicMembrane(position, size)
+	local membrane = Instance.new("Part")
+	membrane.Name = "OrganicMembrane"
+	membrane.Size = size
+	membrane.Position = position
+	membrane.Anchored = true
+	membrane.Color = Color3.fromRGB(40, 30, 35)
+	membrane.Material = Enum.Material.SmoothPlastic
+	membrane.Transparency = 0.4
+	membrane.CanCollide = false
+	membrane.Parent = UpsideDownFolder
+	
+	-- Efecto pulsante
+	spawn(function()
+		while membrane.Parent do
+			local pulse = TweenService:Create(membrane, TweenInfo.new(2, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut, -1, true), {
+				Transparency = 0.6,
+				Size = size * 1.05
+			})
+			pulse:Play()
+			wait(2)
+		end
+	end)
+	
+	return membrane
+end
+
+-- Sistema de poderes de Eleven
+PowerEvent.OnServerEvent:Connect(function(player, powerType, targetPosition)
+	local character = player.Character
+	if not character then return end
+	
+	local humanoidRootPart = character:FindFirstChild("HumanoidRootPart")
+	if not humanoidRootPart then return end
+	
+	if powerType == "Telekinesis" then
+		-- Crear efecto de telequinesis
+		local effect = Instance.new("Part")
+		effect.Name = "TelekinesisEffect"
+		effect.Size = Vector3.new(5, 5, 5)
+		effect.Position = targetPosition
+		effect.Anchored = true
+		effect.CanCollide = false
+		effect.Transparency = 0.5
+		effect.Color = Color3.fromRGB(200, 100, 255)
+		effect.Material = Enum.Material.Neon
+		effect.Shape = Enum.PartType.Ball
+		effect.Parent = workspace
+		
+		-- Luz del efecto
+		local light = Instance.new("PointLight")
+		light.Color = Color3.fromRGB(200, 100, 255)
+		light.Brightness = 5
+		light.Range = 30
+		light.Parent = effect
+		
+		-- Partículas de energía
+		local particles = Instance.new("ParticleEmitter")
+		particles.Texture = "rbxasset://textures/particles/sparkles_main.dds"
+		particles.Color = ColorSequence.new(Color3.fromRGB(200, 100, 255))
+		particles.Size = NumberSequence.new(1, 0)
+		particles.Transparency = NumberSequence.new(0, 1)
+		particles.Lifetime = NumberRange.new(0.5, 1)
+		particles.Rate = 100
+		particles.Speed = NumberRange.new(5, 10)
+		particles.Parent = effect
+		
+		-- Empujar objetos cercanos
+		local region = Region3.new(targetPosition - Vector3.new(10, 10, 10), targetPosition + Vector3.new(10, 10, 10))
+		for _, part in pairs(workspace:FindPartsInRegion3(region, nil, 100)) do
+			if part:IsA("BasePart") and not part.Anchored and part.Parent ~= character then
+				local bodyVelocity = Instance.new("BodyVelocity")
+				bodyVelocity.Velocity = (part.Position - targetPosition).Unit * 50
+				bodyVelocity.MaxForce = Vector3.new(4000, 4000, 4000)
+				bodyVelocity.Parent = part
+				game:GetService("Debris"):AddItem(bodyVelocity, 0.5)
+			end
+		end
+		
+		-- Eliminar efecto
+		game:GetService("Debris"):AddItem(effect, 2)
+		
+	elseif powerType == "MindBlast" then
+		-- Onda expansiva mental
+		local blast = Instance.new("Part")
+		blast.Name = "MindBlast"
+		blast.Size = Vector3.new(1, 1, 1)
+		blast.Position = humanoidRootPart.Position
+		blast.Anchored = true
+		blast.CanCollide = false
+		blast.Transparency = 0.3
+		blast.Color = Color3.fromRGB(255, 150, 200)
+		blast.Material = Enum.Material.Neon
+		blast.Shape = Enum.PartType.Ball
+		blast.Parent = workspace
+		
+		-- Expandir onda
+		local expandTween = TweenService:Create(blast, TweenInfo.new(1, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
+			Size = Vector3.new(40, 40, 40),
+			Transparency = 1
+		})
+		expandTween:Play()
+		
+		-- Partículas de onda
+		local particles = Instance.new("ParticleEmitter")
+		particles.Texture = "rbxasset://textures/particles/smoke_main.dds"
+		particles.Color = ColorSequence.new(Color3.fromRGB(255, 150, 200))
+		particles.Size = NumberSequence.new(2, 5)
+		particles.Transparency = NumberSequence.new(0, 1)
+		particles.Lifetime = NumberRange.new(0.5, 1)
+		particles.Rate = 200
+		particles.Speed = NumberRange.new(20, 30)
+		particles.SpreadAngle = Vector2.new(180, 180)
+		particles.Parent = blast
+		
+		game:GetService("Debris"):AddItem(blast, 1)
+		
+	elseif powerType == "Levitation" then
+		-- Levitación del jugador
+		local bodyPosition = Instance.new("BodyPosition")
+		bodyPosition.Position = humanoidRootPart.Position + Vector3.new(0, 10, 0)
+		bodyPosition.MaxForce = Vector3.new(4000, 4000, 4000)
+		bodyPosition.P = 5000
+		bodyPosition.Parent = humanoidRootPart
+		
+		-- Efecto visual de levitación
+		local levEffect = Instance.new("Part")
+		levEffect.Size = Vector3.new(6, 0.5, 6)
+		levEffect.Position = humanoidRootPart.Position - Vector3.new(0, 3, 0)
+		levEffect.Anchored = true
+		levEffect.CanCollide = false
+		levEffect.Transparency = 0.5
+		levEffect.Color = Color3.fromRGB(200, 100, 255)
+		levEffect.Material = Enum.Material.Neon
+		levEffect.Shape = Enum.PartType.Cylinder
+		levEffect.Parent = workspace
+		
+		game:GetService("Debris"):AddItem(bodyPosition, 3)
+		game:GetService("Debris"):AddItem(levEffect, 3)
+	end
+end)
+
+-- Inicializar el mundo
+setupUpsideDownAtmosphere()
+createUpsideDownGround()
+
+-- Crear múltiples lianas en el mundo
+for i = 1, 50 do
+	local randomPos = Vector3.new(
+		math.random(-200, 200),
+		math.random(20, 40),
+		math.random(-200, 200)
+	)
+	createVines(randomPos, math.random(10, 25))
+end
+
+-- Crear edificios del Upside Down
+for i = 1, 10 do
+	local buildingPos = Vector3.new(
+		math.random(-150, 150),
+		math.random(15, 25),
+		math.random(-150, 150)
+	)
+	local buildingSize = Vector3.new(
+		math.random(20, 40),
+		math.random(30, 50),
+		math.random(20, 40)
+	)
+	createUpsideDownBuilding(buildingPos, buildingSize)
+end
+
+-- Crear membranas orgánicas
+for i = 1, 20 do
+	local membranePos = Vector3.new(
+		math.random(-180, 180),
+		math.random(5, 30),
+		math.random(-180, 180)
+	)
+	createOrganicMembrane(membranePos, Vector3.new(15, 10, 0.5))
+end
+
+-- Crear portales
+createPortal(Vector3.new(0, 5, 50), Vector3.new(0, 5, 0))
+
+print("Stranger Things Upside Down world initialized!")
