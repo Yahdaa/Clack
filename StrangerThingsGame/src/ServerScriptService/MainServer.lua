@@ -28,30 +28,30 @@ local function setupUpsideDownAtmosphere()
 	local lighting = game:GetService("Lighting")
 	
 	-- Configuración oscura y tenebrosa
-	lighting.Ambient = Color3.fromRGB(50, 60, 80)
-	lighting.OutdoorAmbient = Color3.fromRGB(40, 50, 70)
-	lighting.Brightness = 1.5
-	lighting.ClockTime = 0
-	lighting.FogColor = Color3.fromRGB(30, 40, 50)
-	lighting.FogEnd = 300
-	lighting.FogStart = 50
+	lighting.Ambient = Color3.fromRGB(100, 110, 130)
+	lighting.OutdoorAmbient = Color3.fromRGB(90, 100, 120)
+	lighting.Brightness = 2.5
+	lighting.ClockTime = 14
+	lighting.FogColor = Color3.fromRGB(60, 70, 90)
+	lighting.FogEnd = 500
+	lighting.FogStart = 100
 	
 	-- Efectos atmosféricos
 	local atmosphere = Instance.new("Atmosphere")
-	atmosphere.Density = 0.5
-	atmosphere.Offset = 0.5
-	atmosphere.Color = Color3.fromRGB(20, 25, 35)
-	atmosphere.Decay = Color3.fromRGB(15, 20, 30)
-	atmosphere.Glare = 0
-	atmosphere.Haze = 2
+	atmosphere.Density = 0.3
+	atmosphere.Offset = 0.3
+	atmosphere.Color = Color3.fromRGB(80, 90, 110)
+	atmosphere.Decay = Color3.fromRGB(70, 80, 100)
+	atmosphere.Glare = 0.5
+	atmosphere.Haze = 1
 	atmosphere.Parent = lighting
 	
 	-- Color correction para tono azul-gris
 	local colorCorrection = Instance.new("ColorCorrectionEffect")
-	colorCorrection.Brightness = -0.1
-	colorCorrection.Contrast = 0.2
-	colorCorrection.Saturation = -0.3
-	colorCorrection.TintColor = Color3.fromRGB(150, 170, 200)
+	colorCorrection.Brightness = 0.1
+	colorCorrection.Contrast = 0.1
+	colorCorrection.Saturation = -0.2
+	colorCorrection.TintColor = Color3.fromRGB(180, 190, 210)
 	colorCorrection.Parent = lighting
 	
 	-- Bloom para efectos de luz
