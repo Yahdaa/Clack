@@ -1,0 +1,133 @@
+═══════════════════════════════════════════════════════════════════
+   JUEGO DE AVATAR - PODERES ELEMENTALES PARA ROBLOX STUDIO
+═══════════════════════════════════════════════════════════════════
+
+📁 ARCHIVOS CREADOS:
+--------------------
+1. ServerScriptService/ElementalSystem.lua  → SERVER SCRIPT
+2. StarterPlayer/StarterPlayerScripts/ElementalClient.lua  → LOCAL SCRIPT
+
+
+🎮 CÓMO INSTALAR EN ROBLOX STUDIO:
+===================================
+
+PASO 1: ABRIR ROBLOX STUDIO
+----------------------------
+- Abre Roblox Studio
+- Crea un nuevo lugar o abre uno existente
+
+
+PASO 2: INSTALAR EL SERVER SCRIPT
+----------------------------------
+1. En el Explorer (panel izquierdo), busca "ServerScriptService"
+2. Haz clic derecho en ServerScriptService
+3. Selecciona "Insert Object" → "Script"
+4. Renombra el script a "ElementalSystem"
+5. ABRE EL ARCHIVO: ServerScriptService/ElementalSystem.lua
+6. COPIA TODO EL CÓDIGO (Ctrl+A, Ctrl+C)
+7. PÉGALO en el script de Roblox Studio (Ctrl+V)
+
+
+PASO 3: INSTALAR EL LOCAL SCRIPT
+---------------------------------
+1. En el Explorer, busca "StarterPlayer"
+2. Expande "StarterPlayer" y busca "StarterPlayerScripts"
+3. Haz clic derecho en "StarterPlayerScripts"
+4. Selecciona "Insert Object" → "LocalScript"
+5. Renombra el script a "ElementalClient"
+6. ABRE EL ARCHIVO: StarterPlayer/StarterPlayerScripts/ElementalClient.lua
+7. COPIA TODO EL CÓDIGO (Ctrl+A, Ctrl+C)
+8. PÉGALO en el LocalScript de Roblox Studio (Ctrl+V)
+
+
+PASO 4: PROBAR EL JUEGO
+------------------------
+1. Presiona F5 o haz clic en el botón "Play" (▶)
+2. Aparecerá una pantalla de selección de elemento
+3. Elige tu elemento: Fuego, Agua, Tierra o Aire
+4. ¡Usa tus poderes!
+
+
+🎮 CONTROLES DEL JUEGO:
+=======================
+Q = Habilidad 1 (Ataque básico)
+E = Habilidad 2 (Habilidad especial)
+R = Habilidad 3 (Habilidad definitiva)
+
+También puedes hacer clic en los botones de la pantalla.
+
+
+🔥 PODERES DISPONIBLES:
+=======================
+
+FUEGO 🔥
+--------
+Q - Bola de Fuego: Proyectil rápido (25 daño)
+E - Lanzallamas: Ataque continuo (15 daño/tick)
+R - Explosión: Explosión masiva (40 daño)
+
+AGUA 💧
+-------
+Q - Látigo de Agua: Ataque medio alcance (20 daño)
+E - Escudo de Agua: Protección temporal
+R - Ola Gigante: Ola devastadora (35 daño)
+
+TIERRA 🌍
+---------
+Q - Lanzar Roca: Proyectil pesado (30 daño)
+E - Muro de Tierra: Barrera defensiva
+R - Terremoto: Daño de área (45 daño)
+
+AIRE 💨
+-------
+Q - Ráfaga de Viento: Ataque con knockback (18 daño)
+E - Tornado: Vórtice giratorio (28 daño)
+R - Levitación: Vuela temporalmente
+
+
+⚙️ CARACTERÍSTICAS:
+===================
+✅ 4 elementos diferentes
+✅ 3 poderes únicos por elemento (12 habilidades totales)
+✅ Efectos visuales espectaculares
+✅ Sistema de daño entre jugadores
+✅ Cooldowns balanceados
+✅ UI moderna y elegante
+✅ Pantalla de selección al inicio
+✅ Compatible con FilteringEnabled
+
+
+🔧 SOLUCIÓN DE PROBLEMAS:
+==========================
+
+Problema: No aparece la pantalla de selección
+Solución: Verifica que el LocalScript esté en StarterPlayerScripts
+
+Problema: Los poderes no funcionan
+Solución: Asegúrate de que ambos scripts estén instalados correctamente
+
+Problema: No hace daño a otros jugadores
+Solución: Los jugadores deben tener un Humanoid en su Character
+
+Problema: Errores en la consola
+Solución: Revisa que hayas copiado TODO el código sin errores
+
+
+📝 NOTAS IMPORTANTES:
+=====================
+- Los scripts usan RemoteEvents para comunicación segura
+- El sistema incluye protección contra spam
+- Los efectos se destruyen automáticamente
+- Compatible con juegos multijugador
+- Inspirado en Avatar: La Leyenda de Aang
+
+
+🎯 PERSONALIZACIÓN:
+===================
+Puedes modificar el daño, cooldowns y colores editando las tablas
+en los scripts. Busca "ElementAbilities" y "ElementColors".
+
+
+═══════════════════════════════════════════════════════════════════
+¡DISFRUTA DOMINANDO LOS ELEMENTOS! 🔥💧🌍💨
+═══════════════════════════════════════════════════════════════════
