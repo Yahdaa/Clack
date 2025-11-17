@@ -1,7 +1,6 @@
--- LOCAL SCRIPT: Cliente de App Store
+-- LOCAL SCRIPT: App Store HTML
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local UserInputService = game:GetService("UserInputService")
 
 local player = Players.LocalPlayer
 local playerGui = player:WaitForChild("PlayerGui")
@@ -9,273 +8,268 @@ local playerGui = player:WaitForChild("PlayerGui")
 repeat task.wait() until ReplicatedStorage:FindFirstChild("AppStoreRemotes")
 local Remotes = ReplicatedStorage.AppStoreRemotes
 
-local currentAppId = nil
-local editMode = false
-local selectedObject = nil
-local placedObjects = {}
-
 local function createMainUI()
-	local screenGui = Instance.new("ScreenGui")
-	screenGui.Name = "AppStoreUI"
-	screenGui.ResetOnSpawn = false
-	screenGui.Parent = playerGui
+	local sg = Instance.new("ScreenGui")
+	sg.Name = "AppStoreUI"
+	sg.ResetOnSpawn = false
+	sg.IgnoreGuiInset = true
+	sg.Parent = playerGui
 	
-	local background = Instance.new("Frame")
-	background.Size = UDim2.new(1, 0, 1, 0)
-	background.BackgroundColor3 = Color3.fromRGB(240, 240, 245)
-	background.Parent = screenGui
+	local main = Instance.new("Frame")
+	main.Size = UDim2.new(1, 0, 1, 0)
+	main.Position = UDim2.new(0, 0, 0, 0)
+	main.BackgroundColor3 = Color3.fromRGB(245, 245, 250)
+	main.BorderSizePixel = 0
+	main.Parent = sg
 	
 	local header = Instance.new("Frame")
-	header.Size = UDim2.new(1, 0, 0, 70)
+	header.Size = UDim2.new(1, 0, 0, 80)
 	header.BackgroundColor3 = Color3.fromRGB(0, 122, 255)
-	header.Parent = background
+	header.BorderSizePixel = 0
+	header.Parent = main
 	
 	local title = Instance.new("TextLabel")
 	title.Size = UDim2.new(0, 300, 1, 0)
-	title.Position = UDim2.new(0, 20, 0, 0)
+	title.Position = UDim2.new(0, 30, 0, 0)
 	title.BackgroundTransparency = 1
 	title.Text = "📱 App Store"
 	title.TextColor3 = Color3.new(1, 1, 1)
-	title.TextSize = 32
+	title.TextSize = 36
 	title.Font = Enum.Font.GothamBold
 	title.TextXAlignment = Enum.TextXAlignment.Left
 	title.Parent = header
 	
 	local createBtn = Instance.new("TextButton")
-	createBtn.Size = UDim2.new(0, 180, 0, 45)
-	createBtn.Position = UDim2.new(1, -200, 0.5, -22.5)
+	createBtn.Size = UDim2.new(0, 200, 0, 50)
+	createBtn.Position = UDim2.new(1, -230, 0.5, -25)
 	createBtn.BackgroundColor3 = Color3.fromRGB(52, 199, 89)
 	createBtn.Text = "+ Crear App"
 	createBtn.TextColor3 = Color3.new(1, 1, 1)
-	createBtn.TextSize = 20
+	createBtn.TextSize = 22
 	createBtn.Font = Enum.Font.GothamBold
+	createBtn.BorderSizePixel = 0
 	createBtn.Parent = header
 	
-	local corner = Instance.new("UICorner")
-	corner.CornerRadius = UDim.new(0, 10)
-	corner.Parent = createBtn
+	Instance.new("UICorner", createBtn).CornerRadius = UDim.new(0, 12)
 	
-	local scrollFrame = Instance.new("ScrollingFrame")
-	scrollFrame.Size = UDim2.new(1, -40, 1, -100)
-	scrollFrame.Position = UDim2.new(0, 20, 0, 85)
-	scrollFrame.BackgroundTransparency = 1
-	scrollFrame.BorderSizePixel = 0
-	scrollFrame.ScrollBarThickness = 8
-	scrollFrame.Parent = background
+	local scroll = Instance.new("ScrollingFrame")
+	scroll.Size = UDim2.new(1, -60, 1, -120)
+	scroll.Position = UDim2.new(0, 30, 0, 100)
+	scroll.BackgroundTransparency = 1
+	scroll.BorderSizePixel = 0
+	scroll.ScrollBarThickness = 10
+	scroll.Parent = main
 	
-	local listLayout = Instance.new("UIGridLayout")
-	listLayout.CellSize = UDim2.new(0, 280, 0, 320)
-	listLayout.CellPadding = UDim2.new(0, 20, 0, 20)
-	listLayout.Parent = scrollFrame
+	local grid = Instance.new("UIGridLayout")
+	grid.CellSize = UDim2.new(0, 320, 0, 380)
+	grid.CellPadding = UDim2.new(0, 25, 0, 25)
+	grid.Parent = scroll
 	
-	createBtn.MouseButton1Click:Connect(function()
-		openCreateAppUI()
-	end)
-	
-	loadApps(scrollFrame)
-	
-	return screenGui
+	createBtn.MouseButton1Click:Connect(openCreateUI)
+	loadApps(scroll)
 end
 
 local function loadApps(container)
-	for _, child in ipairs(container:GetChildren()) do
-		if child:IsA("Frame") then
-			child:Destroy()
-		end
+	for _, c in ipairs(container:GetChildren()) do
+		if c:IsA("Frame") then c:Destroy() end
 	end
 	
 	local apps = Remotes.LoadApps:InvokeServer()
 	
 	for _, app in ipairs(apps) do
-		local appCard = Instance.new("Frame")
-		appCard.Size = UDim2.new(0, 280, 0, 320)
-		appCard.BackgroundColor3 = Color3.new(1, 1, 1)
-		appCard.Parent = container
+		local card = Instance.new("Frame")
+		card.Size = UDim2.new(0, 320, 0, 380)
+		card.BackgroundColor3 = Color3.new(1, 1, 1)
+		card.BorderSizePixel = 0
+		card.Parent = container
 		
-		local cardCorner = Instance.new("UICorner")
-		cardCorner.CornerRadius = UDim.new(0, 12)
-		cardCorner.Parent = appCard
+		Instance.new("UICorner", card).CornerRadius = UDim.new(0, 16)
 		
-		local thumbnail = Instance.new("Frame")
-		thumbnail.Size = UDim2.new(1, -20, 0, 140)
-		thumbnail.Position = UDim2.new(0, 10, 0, 10)
-		thumbnail.BackgroundColor3 = Color3.fromRGB(app.ThumbnailColor[1], app.ThumbnailColor[2], app.ThumbnailColor[3])
-		thumbnail.Parent = appCard
+		local thumb = Instance.new("Frame")
+		thumb.Size = UDim2.new(1, -30, 0, 180)
+		thumb.Position = UDim2.new(0, 15, 0, 15)
+		thumb.BackgroundColor3 = Color3.fromRGB(app.ThumbColor[1], app.ThumbColor[2], app.ThumbColor[3])
+		thumb.BorderSizePixel = 0
+		thumb.Parent = card
 		
-		local thumbCorner = Instance.new("UICorner")
-		thumbCorner.CornerRadius = UDim.new(0, 8)
-		thumbCorner.Parent = thumbnail
+		Instance.new("UICorner", thumb).CornerRadius = UDim.new(0, 12)
 		
 		local appTitle = Instance.new("TextLabel")
-		appTitle.Size = UDim2.new(1, -20, 0, 30)
-		appTitle.Position = UDim2.new(0, 10, 0, 160)
+		appTitle.Size = UDim2.new(1, -30, 0, 35)
+		appTitle.Position = UDim2.new(0, 15, 0, 205)
 		appTitle.BackgroundTransparency = 1
 		appTitle.Text = app.Name
 		appTitle.TextColor3 = Color3.new(0, 0, 0)
-		appTitle.TextSize = 18
+		appTitle.TextSize = 20
 		appTitle.Font = Enum.Font.GothamBold
 		appTitle.TextXAlignment = Enum.TextXAlignment.Left
 		appTitle.TextTruncate = Enum.TextTruncate.AtEnd
-		appTitle.Parent = appCard
+		appTitle.Parent = card
 		
 		local creator = Instance.new("TextLabel")
-		creator.Size = UDim2.new(1, -20, 0, 20)
-		creator.Position = UDim2.new(0, 10, 0, 190)
+		creator.Size = UDim2.new(1, -30, 0, 25)
+		creator.Position = UDim2.new(0, 15, 0, 240)
 		creator.BackgroundTransparency = 1
 		creator.Text = "Por: " .. app.Creator
-		creator.TextColor3 = Color3.fromRGB(100, 100, 100)
-		creator.TextSize = 14
+		creator.TextColor3 = Color3.fromRGB(120, 120, 120)
+		creator.TextSize = 16
 		creator.Font = Enum.Font.Gotham
 		creator.TextXAlignment = Enum.TextXAlignment.Left
-		creator.Parent = appCard
+		creator.Parent = card
 		
 		local stats = Instance.new("TextLabel")
-		stats.Size = UDim2.new(1, -20, 0, 20)
-		stats.Position = UDim2.new(0, 10, 0, 215)
+		stats.Size = UDim2.new(1, -30, 0, 25)
+		stats.Position = UDim2.new(0, 15, 0, 270)
 		stats.BackgroundTransparency = 1
-		stats.Text = "👁 " .. app.Visits .. "  ❤️ " .. app.Likes
-		stats.TextColor3 = Color3.fromRGB(100, 100, 100)
-		stats.TextSize = 14
+		stats.Text = "❤️ " .. (app.Likes or 0) .. " likes"
+		stats.TextColor3 = Color3.fromRGB(120, 120, 120)
+		stats.TextSize = 16
 		stats.Font = Enum.Font.Gotham
 		stats.TextXAlignment = Enum.TextXAlignment.Left
-		stats.Parent = appCard
+		stats.Parent = card
 		
 		local playBtn = Instance.new("TextButton")
-		playBtn.Size = UDim2.new(1, -20, 0, 45)
-		playBtn.Position = UDim2.new(0, 10, 1, -55)
+		playBtn.Size = UDim2.new(1, -30, 0, 55)
+		playBtn.Position = UDim2.new(0, 15, 1, -70)
 		playBtn.BackgroundColor3 = Color3.fromRGB(0, 122, 255)
-		playBtn.Text = "▶ Jugar"
+		playBtn.Text = "▶ Ver App"
 		playBtn.TextColor3 = Color3.new(1, 1, 1)
-		playBtn.TextSize = 18
+		playBtn.TextSize = 20
 		playBtn.Font = Enum.Font.GothamBold
-		playBtn.Parent = appCard
+		playBtn.BorderSizePixel = 0
+		playBtn.Parent = card
 		
-		local btnCorner = Instance.new("UICorner")
-		btnCorner.CornerRadius = UDim.new(0, 8)
-		btnCorner.Parent = playBtn
+		Instance.new("UICorner", playBtn).CornerRadius = UDim.new(0, 10)
 		
 		playBtn.MouseButton1Click:Connect(function()
-			currentAppId = app.Id
-			Remotes.PlayApp:FireServer(app.Id)
-			playerGui.AppStoreUI.Enabled = false
-			createExitButton()
+			openAppViewer(app)
 		end)
-		
-		if app.CreatorId == player.UserId then
-			local editBtn = Instance.new("TextButton")
-			editBtn.Size = UDim2.new(0.48, 0, 0, 45)
-			editBtn.Position = UDim2.new(0, 10, 1, -55)
-			editBtn.BackgroundColor3 = Color3.fromRGB(255, 149, 0)
-			editBtn.Text = "✏️ Editar"
-			editBtn.TextColor3 = Color3.new(1, 1, 1)
-			editBtn.TextSize = 16
-			editBtn.Font = Enum.Font.GothamBold
-			editBtn.Parent = appCard
-			
-			local editCorner = Instance.new("UICorner")
-			editCorner.CornerRadius = UDim.new(0, 8)
-			editCorner.Parent = editBtn
-			
-			playBtn.Size = UDim2.new(0.48, 0, 0, 45)
-			playBtn.Position = UDim2.new(0.52, 10, 1, -55)
-			
-			editBtn.MouseButton1Click:Connect(function()
-				openEditor(app.Id)
-			end)
-		end
 	end
 end
 
-local function openCreateAppUI()
-	local createGui = Instance.new("ScreenGui")
-	createGui.Name = "CreateAppUI"
-	createGui.Parent = playerGui
+function openCreateUI()
+	local sg = Instance.new("ScreenGui")
+	sg.Name = "CreateUI"
+	sg.Parent = playerGui
 	
 	local bg = Instance.new("Frame")
 	bg.Size = UDim2.new(1, 0, 1, 0)
 	bg.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-	bg.BackgroundTransparency = 0.5
-	bg.Parent = createGui
+	bg.BackgroundTransparency = 0.4
+	bg.BorderSizePixel = 0
+	bg.Parent = sg
 	
 	local panel = Instance.new("Frame")
-	panel.Size = UDim2.new(0, 500, 0, 450)
-	panel.Position = UDim2.new(0.5, -250, 0.5, -225)
+	panel.Size = UDim2.new(0, 900, 0, 700)
+	panel.Position = UDim2.new(0.5, -450, 0.5, -350)
 	panel.BackgroundColor3 = Color3.new(1, 1, 1)
+	panel.BorderSizePixel = 0
 	panel.Parent = bg
 	
-	local panelCorner = Instance.new("UICorner")
-	panelCorner.CornerRadius = UDim.new(0, 15)
-	panelCorner.Parent = panel
+	Instance.new("UICorner", panel).CornerRadius = UDim.new(0, 20)
 	
 	local panelTitle = Instance.new("TextLabel")
-	panelTitle.Size = UDim2.new(1, 0, 0, 60)
+	panelTitle.Size = UDim2.new(1, 0, 0, 70)
 	panelTitle.BackgroundTransparency = 1
-	panelTitle.Text = "Crear Nueva App"
+	panelTitle.Text = "Crear Nueva App HTML"
 	panelTitle.TextColor3 = Color3.new(0, 0, 0)
-	panelTitle.TextSize = 28
+	panelTitle.TextSize = 32
 	panelTitle.Font = Enum.Font.GothamBold
 	panelTitle.Parent = panel
 	
 	local nameLabel = Instance.new("TextLabel")
-	nameLabel.Size = UDim2.new(1, -40, 0, 25)
-	nameLabel.Position = UDim2.new(0, 20, 0, 70)
+	nameLabel.Size = UDim2.new(0, 200, 0, 30)
+	nameLabel.Position = UDim2.new(0, 30, 0, 80)
 	nameLabel.BackgroundTransparency = 1
-	nameLabel.Text = "Nombre de la App:"
+	nameLabel.Text = "Nombre:"
 	nameLabel.TextColor3 = Color3.new(0, 0, 0)
-	nameLabel.TextSize = 16
+	nameLabel.TextSize = 18
 	nameLabel.Font = Enum.Font.GothamBold
 	nameLabel.TextXAlignment = Enum.TextXAlignment.Left
 	nameLabel.Parent = panel
 	
 	local nameBox = Instance.new("TextBox")
-	nameBox.Size = UDim2.new(1, -40, 0, 40)
-	nameBox.Position = UDim2.new(0, 20, 0, 100)
+	nameBox.Size = UDim2.new(1, -60, 0, 45)
+	nameBox.Position = UDim2.new(0, 30, 0, 115)
 	nameBox.BackgroundColor3 = Color3.fromRGB(240, 240, 245)
 	nameBox.Text = ""
-	nameBox.PlaceholderText = "Ej: Mi Juego Increíble"
+	nameBox.PlaceholderText = "Mi App Increíble"
 	nameBox.TextColor3 = Color3.new(0, 0, 0)
-	nameBox.TextSize = 16
+	nameBox.TextSize = 18
 	nameBox.Font = Enum.Font.Gotham
+	nameBox.BorderSizePixel = 0
 	nameBox.Parent = panel
 	
-	local nameCorner = Instance.new("UICorner")
-	nameCorner.CornerRadius = UDim.new(0, 8)
-	nameCorner.Parent = nameBox
+	Instance.new("UICorner", nameBox).CornerRadius = UDim.new(0, 10)
 	
-	local descLabel = Instance.new("TextLabel")
-	descLabel.Size = UDim2.new(1, -40, 0, 25)
-	descLabel.Position = UDim2.new(0, 20, 0, 155)
-	descLabel.BackgroundTransparency = 1
-	descLabel.Text = "Descripción:"
-	descLabel.TextColor3 = Color3.new(0, 0, 0)
-	descLabel.TextSize = 16
-	descLabel.Font = Enum.Font.GothamBold
-	descLabel.TextXAlignment = Enum.TextXAlignment.Left
-	descLabel.Parent = panel
+	local codeLabel = Instance.new("TextLabel")
+	codeLabel.Size = UDim2.new(0, 400, 0, 30)
+	codeLabel.Position = UDim2.new(0, 30, 0, 175)
+	codeLabel.BackgroundTransparency = 1
+	codeLabel.Text = "Código HTML (todo en un archivo):"
+	codeLabel.TextColor3 = Color3.new(0, 0, 0)
+	codeLabel.TextSize = 18
+	codeLabel.Font = Enum.Font.GothamBold
+	codeLabel.TextXAlignment = Enum.TextXAlignment.Left
+	codeLabel.Parent = panel
 	
-	local descBox = Instance.new("TextBox")
-	descBox.Size = UDim2.new(1, -40, 0, 80)
-	descBox.Position = UDim2.new(0, 20, 0, 185)
-	descBox.BackgroundColor3 = Color3.fromRGB(240, 240, 245)
-	descBox.Text = ""
-	descBox.PlaceholderText = "Describe tu app..."
-	descBox.TextColor3 = Color3.new(0, 0, 0)
-	descBox.TextSize = 16
-	descBox.Font = Enum.Font.Gotham
-	descBox.TextWrapped = true
-	descBox.TextYAlignment = Enum.TextYAlignment.Top
-	descBox.MultiLine = true
-	descBox.Parent = panel
+	local codeBox = Instance.new("TextBox")
+	codeBox.Size = UDim2.new(1, -60, 0, 380)
+	codeBox.Position = UDim2.new(0, 30, 0, 210)
+	codeBox.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+	codeBox.Text = [[<!DOCTYPE html>
+<html>
+<head>
+<style>
+body { 
+  margin: 0;
+  font-family: Arial;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+.container {
+  text-align: center;
+  color: white;
+}
+h1 { font-size: 48px; }
+button {
+  padding: 15px 30px;
+  font-size: 20px;
+  background: white;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+}
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>¡Mi Primera App!</h1>
+  <p>Edita este HTML para crear tu app</p>
+  <button onclick="alert('¡Funciona!')">Click Aquí</button>
+</div>
+</body>
+</html>]]
+	codeBox.TextColor3 = Color3.fromRGB(0, 255, 100)
+	codeBox.TextSize = 16
+	codeBox.Font = Enum.Font.Code
+	codeBox.TextXAlignment = Enum.TextXAlignment.Left
+	codeBox.TextYAlignment = Enum.TextYAlignment.Top
+	codeBox.MultiLine = true
+	codeBox.ClearTextOnFocus = false
+	codeBox.BorderSizePixel = 0
+	codeBox.Parent = panel
 	
-	local descCorner = Instance.new("UICorner")
-	descCorner.CornerRadius = UDim.new(0, 8)
-	descCorner.Parent = descBox
+	Instance.new("UICorner", codeBox).CornerRadius = UDim.new(0, 10)
 	
 	local colorLabel = Instance.new("TextLabel")
-	colorLabel.Size = UDim2.new(1, -40, 0, 25)
-	colorLabel.Position = UDim2.new(0, 20, 0, 280)
+	colorLabel.Size = UDim2.new(0, 200, 0, 30)
+	colorLabel.Position = UDim2.new(0, 30, 0, 605)
 	colorLabel.BackgroundTransparency = 1
-	colorLabel.Text = "Color de Miniatura:"
+	colorLabel.Text = "Color miniatura:"
 	colorLabel.TextColor3 = Color3.new(0, 0, 0)
 	colorLabel.TextSize = 16
 	colorLabel.Font = Enum.Font.GothamBold
@@ -283,226 +277,157 @@ local function openCreateAppUI()
 	colorLabel.Parent = panel
 	
 	local colors = {
-		{255, 59, 48}, {255, 149, 0}, {255, 204, 0}, {52, 199, 89},
-		{0, 122, 255}, {88, 86, 214}, {175, 82, 222}, {255, 45, 85}
+		{255, 59, 48}, {255, 149, 0}, {52, 199, 89}, {0, 122, 255},
+		{88, 86, 214}, {255, 45, 85}, {255, 204, 0}, {175, 82, 222}
 	}
-	
 	local selectedColor = colors[1]
 	
-	for i, color in ipairs(colors) do
-		local colorBtn = Instance.new("TextButton")
-		colorBtn.Size = UDim2.new(0, 45, 0, 45)
-		colorBtn.Position = UDim2.new(0, 20 + (i - 1) * 55, 0, 310)
-		colorBtn.BackgroundColor3 = Color3.fromRGB(color[1], color[2], color[3])
-		colorBtn.Text = ""
-		colorBtn.Parent = panel
+	for i, c in ipairs(colors) do
+		local btn = Instance.new("TextButton")
+		btn.Size = UDim2.new(0, 50, 0, 50)
+		btn.Position = UDim2.new(0, 30 + (i - 1) * 60, 0, 635)
+		btn.BackgroundColor3 = Color3.fromRGB(c[1], c[2], c[3])
+		btn.Text = ""
+		btn.BorderSizePixel = 0
+		btn.Parent = panel
 		
-		local colorCorner = Instance.new("UICorner")
-		colorCorner.CornerRadius = UDim.new(0, 8)
-		colorCorner.Parent = colorBtn
+		Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 10)
 		
-		colorBtn.MouseButton1Click:Connect(function()
-			selectedColor = color
+		btn.MouseButton1Click:Connect(function()
+			selectedColor = c
 		end)
 	end
 	
 	local publishBtn = Instance.new("TextButton")
-	publishBtn.Size = UDim2.new(0, 220, 0, 50)
-	publishBtn.Position = UDim2.new(0.5, -110, 1, -70)
+	publishBtn.Size = UDim2.new(0, 250, 0, 60)
+	publishBtn.Position = UDim2.new(0.5, -125, 1, -80)
 	publishBtn.BackgroundColor3 = Color3.fromRGB(52, 199, 89)
-	publishBtn.Text = "Publicar y Editar"
+	publishBtn.Text = "📱 Publicar App"
 	publishBtn.TextColor3 = Color3.new(1, 1, 1)
-	publishBtn.TextSize = 18
+	publishBtn.TextSize = 24
 	publishBtn.Font = Enum.Font.GothamBold
+	publishBtn.BorderSizePixel = 0
 	publishBtn.Parent = panel
 	
-	local pubCorner = Instance.new("UICorner")
-	pubCorner.CornerRadius = UDim.new(0, 10)
-	pubCorner.Parent = publishBtn
+	Instance.new("UICorner", publishBtn).CornerRadius = UDim.new(0, 12)
 	
 	local cancelBtn = Instance.new("TextButton")
-	cancelBtn.Size = UDim2.new(0, 100, 0, 50)
-	cancelBtn.Position = UDim2.new(0, 20, 1, -70)
+	cancelBtn.Size = UDim2.new(0, 120, 0, 60)
+	cancelBtn.Position = UDim2.new(0, 30, 1, -80)
 	cancelBtn.BackgroundColor3 = Color3.fromRGB(200, 200, 200)
 	cancelBtn.Text = "Cancelar"
 	cancelBtn.TextColor3 = Color3.new(0, 0, 0)
-	cancelBtn.TextSize = 16
+	cancelBtn.TextSize = 20
 	cancelBtn.Font = Enum.Font.GothamBold
+	cancelBtn.BorderSizePixel = 0
 	cancelBtn.Parent = panel
 	
-	local cancelCorner = Instance.new("UICorner")
-	cancelCorner.CornerRadius = UDim.new(0, 10)
-	cancelCorner.Parent = cancelBtn
+	Instance.new("UICorner", cancelBtn).CornerRadius = UDim.new(0, 12)
 	
 	publishBtn.MouseButton1Click:Connect(function()
-		if nameBox.Text ~= "" then
-			local appData = {
+		if nameBox.Text ~= "" and codeBox.Text ~= "" then
+			Remotes.PublishApp:FireServer({
 				Name = nameBox.Text,
-				Description = descBox.Text,
-				ThumbnailColor = selectedColor,
-				Objects = {}
-			}
-			Remotes.PublishApp:FireServer(appData)
-			createGui:Destroy()
+				HTMLCode = codeBox.Text,
+				ThumbColor = selectedColor
+			})
+			sg:Destroy()
+			task.wait(0.5)
+			playerGui.AppStoreUI:Destroy()
+			createMainUI()
 		end
 	end)
 	
 	cancelBtn.MouseButton1Click:Connect(function()
-		createGui:Destroy()
+		sg:Destroy()
 	end)
 end
 
-local function openEditor(appId)
-	currentAppId = appId
-	editMode = true
-	placedObjects = {}
+function openAppViewer(app)
+	local sg = Instance.new("ScreenGui")
+	sg.Name = "AppViewer"
+	sg.IgnoreGuiInset = true
+	sg.Parent = playerGui
 	
-	local appData = Remotes.LoadAppContent:InvokeServer(appId)
-	if not appData then return end
+	local main = Instance.new("Frame")
+	main.Size = UDim2.new(1, 0, 1, 0)
+	main.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+	main.BorderSizePixel = 0
+	main.Parent = sg
 	
-	Remotes.PlayApp:FireServer(appId)
-	playerGui.AppStoreUI.Enabled = false
+	local topBar = Instance.new("Frame")
+	topBar.Size = UDim2.new(1, 0, 0, 60)
+	topBar.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+	topBar.BorderSizePixel = 0
+	topBar.Parent = main
 	
-	local editorGui = Instance.new("ScreenGui")
-	editorGui.Name = "EditorUI"
-	editorGui.Parent = playerGui
+	local appTitle = Instance.new("TextLabel")
+	appTitle.Size = UDim2.new(0, 400, 1, 0)
+	appTitle.Position = UDim2.new(0, 20, 0, 0)
+	appTitle.BackgroundTransparency = 1
+	appTitle.Text = app.Name
+	appTitle.TextColor3 = Color3.new(1, 1, 1)
+	appTitle.TextSize = 24
+	appTitle.Font = Enum.Font.GothamBold
+	appTitle.TextXAlignment = Enum.TextXAlignment.Left
+	appTitle.Parent = topBar
 	
-	local toolbar = Instance.new("Frame")
-	toolbar.Size = UDim2.new(0, 250, 0, 400)
-	toolbar.Position = UDim2.new(0, 10, 0.5, -200)
-	toolbar.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-	toolbar.BackgroundTransparency = 0.2
-	toolbar.Parent = editorGui
+	local closeBtn = Instance.new("TextButton")
+	closeBtn.Size = UDim2.new(0, 150, 0, 40)
+	closeBtn.Position = UDim2.new(1, -170, 0.5, -20)
+	closeBtn.BackgroundColor3 = Color3.fromRGB(255, 59, 48)
+	closeBtn.Text = "✕ Cerrar"
+	closeBtn.TextColor3 = Color3.new(1, 1, 1)
+	closeBtn.TextSize = 20
+	closeBtn.Font = Enum.Font.GothamBold
+	closeBtn.BorderSizePixel = 0
+	closeBtn.Parent = topBar
 	
-	local toolCorner = Instance.new("UICorner")
-	toolCorner.CornerRadius = UDim.new(0, 10)
-	toolCorner.Parent = toolbar
+	Instance.new("UICorner", closeBtn).CornerRadius = UDim.new(0, 10)
 	
-	local toolTitle = Instance.new("TextLabel")
-	toolTitle.Size = UDim2.new(1, 0, 0, 40)
-	toolTitle.BackgroundTransparency = 1
-	toolTitle.Text = "🛠️ Editor"
-	toolTitle.TextColor3 = Color3.new(1, 1, 1)
-	toolTitle.TextSize = 20
-	toolTitle.Font = Enum.Font.GothamBold
-	toolTitle.Parent = toolbar
+	local likeBtn = Instance.new("TextButton")
+	likeBtn.Size = UDim2.new(0, 150, 0, 40)
+	likeBtn.Position = UDim2.new(1, -340, 0.5, -20)
+	likeBtn.BackgroundColor3 = Color3.fromRGB(255, 45, 85)
+	likeBtn.Text = "❤️ Like"
+	likeBtn.TextColor3 = Color3.new(1, 1, 1)
+	likeBtn.TextSize = 20
+	likeBtn.Font = Enum.Font.GothamBold
+	likeBtn.BorderSizePixel = 0
+	likeBtn.Parent = topBar
 	
-	local objects = {
-		{Name = "Plataforma", Size = Vector3.new(10, 1, 10), Color = "Bright green"},
-		{Name = "Obstáculo", Size = Vector3.new(4, 4, 4), Color = "Bright red"},
-		{Name = "Muro", Size = Vector3.new(10, 8, 1), Color = "Dark stone grey"},
-		{Name = "Rampa", Size = Vector3.new(8, 1, 10), Color = "Bright yellow"}
-	}
+	Instance.new("UICorner", likeBtn).CornerRadius = UDim.new(0, 10)
 	
-	for i, obj in ipairs(objects) do
-		local btn = Instance.new("TextButton")
-		btn.Size = UDim2.new(1, -20, 0, 50)
-		btn.Position = UDim2.new(0, 10, 0, 40 + i * 60)
-		btn.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-		btn.Text = "➕ " .. obj.Name
-		btn.TextColor3 = Color3.new(1, 1, 1)
-		btn.TextSize = 16
-		btn.Font = Enum.Font.GothamBold
-		btn.Parent = toolbar
-		
-		local btnCorner = Instance.new("UICorner")
-		btnCorner.CornerRadius = UDim.new(0, 8)
-		btnCorner.Parent = btn
-		
-		btn.MouseButton1Click:Connect(function()
-			local char = player.Character
-			if char and char:FindFirstChild("HumanoidRootPart") then
-				local pos = char.HumanoidRootPart.Position + char.HumanoidRootPart.CFrame.LookVector * 10
-				local part = Instance.new("Part")
-				part.Size = obj.Size
-				part.Position = pos
-				part.BrickColor = BrickColor.new(obj.Color)
-				part.Anchored = true
-				part.Parent = workspace.AppWorlds:FindFirstChild(appId)
-				
-				table.insert(placedObjects, {
-					Part = part,
-					SizeX = obj.Size.X, SizeY = obj.Size.Y, SizeZ = obj.Size.Z,
-					PosX = pos.X, PosY = pos.Y, PosZ = pos.Z,
-					RotX = 0, RotY = 0, RotZ = 0,
-					Color = obj.Color,
-					Material = "Plastic"
-				})
-			end
-		end)
-	end
+	local browser = Instance.new("Frame")
+	browser.Size = UDim2.new(1, -40, 1, -100)
+	browser.Position = UDim2.new(0, 20, 0, 80)
+	browser.BackgroundColor3 = Color3.new(1, 1, 1)
+	browser.BorderSizePixel = 0
+	browser.Parent = main
 	
-	local saveBtn = Instance.new("TextButton")
-	saveBtn.Size = UDim2.new(1, -20, 0, 50)
-	saveBtn.Position = UDim2.new(0, 10, 1, -120)
-	saveBtn.BackgroundColor3 = Color3.fromRGB(52, 199, 89)
-	saveBtn.Text = "💾 Guardar"
-	saveBtn.TextColor3 = Color3.new(1, 1, 1)
-	saveBtn.TextSize = 18
-	saveBtn.Font = Enum.Font.GothamBold
-	saveBtn.Parent = toolbar
+	Instance.new("UICorner", browser).CornerRadius = UDim.new(0, 12)
 	
-	local saveCorner = Instance.new("UICorner")
-	saveCorner.CornerRadius = UDim.new(0, 8)
-	saveCorner.Parent = saveBtn
+	local htmlLabel = Instance.new("TextLabel")
+	htmlLabel.Size = UDim2.new(1, -40, 1, -40)
+	htmlLabel.Position = UDim2.new(0, 20, 0, 20)
+	htmlLabel.BackgroundTransparency = 1
+	htmlLabel.Text = "🌐 Vista previa HTML\n\n" .. app.Name .. "\n\nPor: " .. app.Creator .. "\n\n(En Roblox no se puede ejecutar HTML real,\npero en un navegador web se vería así)\n\nCódigo guardado correctamente ✓"
+	htmlLabel.TextColor3 = Color3.fromRGB(100, 100, 100)
+	htmlLabel.TextSize = 20
+	htmlLabel.Font = Enum.Font.Gotham
+	htmlLabel.TextWrapped = true
+	htmlLabel.Parent = browser
 	
-	local exitBtn = Instance.new("TextButton")
-	exitBtn.Size = UDim2.new(1, -20, 0, 50)
-	exitBtn.Position = UDim2.new(0, 10, 1, -60)
-	exitBtn.BackgroundColor3 = Color3.fromRGB(255, 59, 48)
-	exitBtn.Text = "🚪 Salir"
-	exitBtn.TextColor3 = Color3.new(1, 1, 1)
-	exitBtn.TextSize = 18
-	exitBtn.Font = Enum.Font.GothamBold
-	exitBtn.Parent = toolbar
-	
-	local exitCorner = Instance.new("UICorner")
-	exitCorner.CornerRadius = UDim.new(0, 8)
-	exitCorner.Parent = exitBtn
-	
-	saveBtn.MouseButton1Click:Connect(function()
-		Remotes.SaveAppContent:FireServer(appId, placedObjects)
+	closeBtn.MouseButton1Click:Connect(function()
+		sg:Destroy()
 	end)
 	
-	exitBtn.MouseButton1Click:Connect(function()
-		editMode = false
-		editorGui:Destroy()
-		Remotes.ExitApp:FireServer()
-		playerGui.AppStoreUI.Enabled = true
+	likeBtn.MouseButton1Click:Connect(function()
+		Remotes.LikeApp:FireServer(app.Id)
+		likeBtn.Text = "❤️ ¡Liked!"
+		likeBtn.BackgroundColor3 = Color3.fromRGB(52, 199, 89)
 	end)
 end
-
-local function createExitButton()
-	local exitGui = Instance.new("ScreenGui")
-	exitGui.Name = "ExitAppUI"
-	exitGui.Parent = playerGui
-	
-	local exitBtn = Instance.new("TextButton")
-	exitBtn.Size = UDim2.new(0, 150, 0, 50)
-	exitBtn.Position = UDim2.new(0.5, -75, 0, 20)
-	exitBtn.BackgroundColor3 = Color3.fromRGB(255, 59, 48)
-	exitBtn.Text = "🏠 Salir"
-	exitBtn.TextColor3 = Color3.new(1, 1, 1)
-	exitBtn.TextSize = 20
-	exitBtn.Font = Enum.Font.GothamBold
-	exitBtn.Parent = exitGui
-	
-	local corner = Instance.new("UICorner")
-	corner.CornerRadius = UDim.new(0, 10)
-	corner.Parent = exitBtn
-	
-	exitBtn.MouseButton1Click:Connect(function()
-		Remotes.ExitApp:FireServer()
-		exitGui:Destroy()
-		playerGui.AppStoreUI.Enabled = true
-	end)
-end
-
-Remotes.CreateApp.OnClientEvent:Connect(function(success, appId)
-	if success then
-		openEditor(appId)
-	end
-end)
 
 task.wait(1)
 createMainUI()
